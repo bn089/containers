@@ -1,0 +1,63 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata: 
+  name: nginx
+  # namespace: default
+  # resourceVersion: "1748387823028047009"
+  # uid: a1317cc9-9d3c-4250-956a-ed16c02e6af1
+spec:
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - resource:
+      name: cpu
+      target:
+        averageUtilization: 50
+        type: Utilization
+    type: Resource
+  - resource:
+      name: memory
+      target:
+        averageUtilization: 50
+        type: Utilization
+    type: Resource
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: nginx
+  behavior:
+   scaleDown:
+    stabilizationWindowSeconds: 30 # every 30 seconds stabilize = do nothing 
+    policies:
+    - type: Percent
+      value: 20
+      periodSeconds: 15
+# status:
+#   conditions:
+#   - lastTransitionTime: "2025-05-27T23:17:03Z"
+#     message: recent recommendations were higher than current one, applying the highest
+#       recent recommendation
+#     reason: ScaleDownStabilized
+#     status: "True"
+#     type: AbleToScale
+#   - lastTransitionTime: "2025-05-27T23:17:03Z"
+#     message: the HPA was able to successfully calculate a replica count from cpu resource
+#       utilization (percentage of request)
+#     reason: ValidMetricFound
+#     status: "True"
+#     type: ScalingActive
+#   - lastTransitionTime: "2025-05-27T23:17:02Z"
+#     message: the desired count is within the acceptable range
+#     reason: DesiredWithinRange
+#     status: "False"
+#     type: ScalingLimited
+#   # currentMetrics:
+#   # # - resource:
+#   # #     current:
+#   # #       averageUtilization: 0
+#   # #       averageValue: "0"
+#   # #       value: "0"
+#   # #     name: cpu
+#   # #   type: Resource
+#   # # currentReplicas: 1
+#   # # desiredReplicas: 1
